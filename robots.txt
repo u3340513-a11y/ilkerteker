@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.ilkertekerviptransfer.com.tr/sitemap.xml
