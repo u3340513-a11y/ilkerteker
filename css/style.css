@@ -473,9 +473,17 @@ p { margin: 0 0 1em; }
 /* ==========================================================================
    FAQ
    ========================================================================== */
-.faq { background: var(--color-bg-soft); }
+.faq {
+  position: relative;
+  background: linear-gradient(rgba(28, 28, 40, 0.88), rgba(28, 28, 40, 0.88)),
+    url("https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=60") center/cover no-repeat fixed;
+  text-align: center;
+}
 
-.faq-list { max-width: 800px; margin-top: 30px; }
+.faq .section-eyebrow { color: var(--color-primary-light); }
+.faq .section-title { color: #fff; }
+
+.faq-list { max-width: 800px; margin: 30px auto 0; text-align: left; }
 
 .faq-item {
   background: #fff;
