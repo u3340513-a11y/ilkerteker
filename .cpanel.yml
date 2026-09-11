@@ -3,6 +3,10 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/ilkertekerviptra/public_html/
     - /bin/cp -R ./index.html $DEPLOYPATH
+    - /bin/cp -R ./hakkimizda.html $DEPLOYPATH
+    - /bin/cp -R ./hizmetler.html $DEPLOYPATH
+    - /bin/cp -R ./sss.html $DEPLOYPATH
+    - /bin/cp -R ./iletisim.html $DEPLOYPATH
     - /bin/cp -R ./css $DEPLOYPATH
     - /bin/cp -R ./js $DEPLOYPATH
     - /bin/cp -R ./img $DEPLOYPATH
