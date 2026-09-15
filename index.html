@@ -150,10 +150,26 @@
     <form class="booking-form" id="bookingForm" aria-label="Transfer rezervasyon formu">
       <div class="booking-row">
         <div class="field field-from">
-          <label for="fromInput">Nereden <span class="field-hint">(Havaalanı, Adres, Otel yada Yer İsmi)</span></label>
-          <div class="input-icon">
+          <label for="fromInput">Nereden <span class="field-hint">(Havaalanı veya Bölge)</span></label>
+          <div class="input-icon select-wrapper">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 14.5 9 2.5 2.5 0 0 1 12 11.5z"/></svg>
-            <input type="text" id="fromInput" name="from" placeholder="Antalya Havalimanı (AYT)" value="Antalya Havalimanı (AYT)" required>
+            <select id="fromInput" name="from" required>
+              <option value="Antalya Havalimanı (AYT)" selected>Antalya Havalimanı (AYT)</option>
+              <optgroup label="─ Bölgeler ─">
+                <option value="antalya merkez">Antalya Merkez / Kaleiçi / Lara / Kundu / Konyaaltı</option>
+                <option value="belek">Belek / Boğazkent</option>
+                <option value="serik">Serik</option>
+                <option value="side">Side / Manavgat / Sorgun / Çolaklı / Evrenseki / Kumköy / Gündoğdu / Titreyengöl / Denizyaka</option>
+                <option value="kemer">Kemer / Göynük / Beldibi</option>
+                <option value="çamyuva">Çamyuva / Kiriş / Tekirova</option>
+                <option value="kızılot">Kızılot / Kızılağaç</option>
+                <option value="okurcalar">Okurcalar / Avsallar / İncekum / Çenger</option>
+                <option value="alanya">Alanya / Konaklı / Türkler / Olimpos</option>
+                <option value="mahmutlar">Mahmutlar / Kargıcak / Kestel</option>
+                <option value="adrasan">Adrasan</option>
+                <option value="kaş">Kaş / Kalkan</option>
+              </optgroup>
+            </select>
           </div>
         </div>
 
@@ -162,10 +178,66 @@
         </button>
 
         <div class="field field-to">
-          <label for="toInput">Nereye <span class="field-hint">(Havaalanı, Adres, Otel yada Yer İsmi)</span></label>
-          <div class="input-icon">
+          <label for="toInput">Nereye <span class="field-hint">(Havaalanı veya Bölge)</span></label>
+          <div class="input-icon select-wrapper">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/></svg>
-            <input type="text" id="toInput" name="to" placeholder="Otel adı, bölge veya adres" required>
+            <select id="toInput" name="to" required>
+              <option value="" disabled selected>Lütfen bölge seçin</option>
+              <option value="Antalya Havalimanı (AYT)">Antalya Havalimanı (AYT)</option>
+              <optgroup label="─ Antalya ─">
+                <option value="antalya merkez">Antalya Merkez</option>
+                <option value="lara">Lara</option>
+                <option value="kundu">Kundu</option>
+                <option value="konyaaltı">Konyaaltı</option>
+                <option value="kaleiçi">Kaleiçi</option>
+              </optgroup>
+              <optgroup label="─ Belek / Serik ─">
+                <option value="belek">Belek</option>
+                <option value="boğazkent">Boğazkent</option>
+                <option value="serik">Serik</option>
+              </optgroup>
+              <optgroup label="─ Kemer ─">
+                <option value="kemer">Kemer</option>
+                <option value="göynük">Göynük</option>
+                <option value="beldibi">Beldibi</option>
+                <option value="çamyuva">Çamyuva</option>
+                <option value="kiriş">Kiriş</option>
+                <option value="tekirova">Tekirova</option>
+              </optgroup>
+              <optgroup label="─ Side / Manavgat ─">
+                <option value="side">Side</option>
+                <option value="manavgat">Manavgat</option>
+                <option value="sorgun">Sorgun</option>
+                <option value="çolaklı">Çolaklı</option>
+                <option value="evrenseki">Evrenseki</option>
+                <option value="kumköy">Kumköy</option>
+                <option value="gündoğdu">Gündoğdu</option>
+                <option value="titreyengöl">Titreyengöl</option>
+                <option value="denizyaka">Denizyaka</option>
+              </optgroup>
+              <optgroup label="─ Alanya Çevresi ─">
+                <option value="kızılot">Kızılot</option>
+                <option value="kızılağaç">Kızılağaç</option>
+                <option value="okurcalar">Okurcalar</option>
+                <option value="avsallar">Avsallar</option>
+                <option value="incekum">İncekum</option>
+                <option value="çenger">Çenger</option>
+                <option value="konaklı">Konaklı</option>
+                <option value="türkler">Türkler</option>
+                <option value="alanya">Alanya</option>
+              </optgroup>
+              <optgroup label="─ Alanya Doğusu ─">
+                <option value="mahmutlar">Mahmutlar</option>
+                <option value="kargıcak">Kargıcak</option>
+                <option value="kestel">Kestel</option>
+              </optgroup>
+              <optgroup label="─ Diğer ─">
+                <option value="olimpos">Olimpos</option>
+                <option value="adrasan">Adrasan</option>
+                <option value="kaş">Kaş</option>
+                <option value="kalkan">Kalkan</option>
+              </optgroup>
+            </select>
           </div>
         </div>
       </div>

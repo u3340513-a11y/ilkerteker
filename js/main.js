@@ -164,35 +164,18 @@
   };
 
   /**
-   * Attempts to find a matching region key from user-entered text.
-   * Uses normalized substring matching against known region names.
+   * Finds a pricing key for the given select value.
+   * Since dropdown values are now exact PRICING keys or the airport string,
+   * this is a direct lookup — no fuzzy matching needed.
    *
-   * @param {string} text - The destination text entered by the user
-   * @returns {string|null} The matched region key, or null if no match
+   * @param {string} value - The select option value
+   * @returns {string|null} The PRICING key, or null if airport/not found
    */
-  function matchRegion(text) {
-    if (!text) return null;
-    var normalized = text.toLowerCase()
-      .replace(/\s+/g, ' ')
-      .trim();
-
-    /* Direct match */
+  function matchRegion(value) {
+    if (!value) return null;
+    var normalized = value.toLowerCase().trim();
     if (PRICING[normalized] !== undefined) return normalized;
-
-    /* Substring match — check if any known region appears in the input */
-    var regionKeys = Object.keys(PRICING);
-    var bestMatch = null;
-    var bestLen = 0;
-
-    for (var i = 0; i < regionKeys.length; i++) {
-      var key = regionKeys[i];
-      if (normalized.indexOf(key) !== -1 && key.length > bestLen) {
-        bestMatch = key;
-        bestLen = key.length;
-      }
-    }
-
-    return bestMatch;
+    return null;
   }
 
   /* ====================================================================
@@ -465,16 +448,38 @@
     });
   }
 
-  /* ---- Swap from/to fields ---- */
+  /* ---- Swap from/to fields (select elements) ---- */
   var swapBtn = document.getElementById('swapBtn');
   var fromInput = document.getElementById('fromInput');
   var toInput = document.getElementById('toInput');
 
   if (swapBtn && fromInput && toInput) {
     swapBtn.addEventListener('click', function () {
-      var tmp = fromInput.value;
-      fromInput.value = toInput.value;
-      toInput.value = tmp;
+      var tmpValue = fromInput.value;
+      var tmpText = fromInput.options[fromInput.selectedIndex] ? fromInput.options[fromInput.selectedIndex].text : '';
+
+      /* Find matching option in fromInput for toInput's current value */
+      var toValue = toInput.value;
+      var fromOption = Array.prototype.find.call(fromInput.options, function (o) {
+        return o.value === toValue;
+      });
+
+      if (fromOption) {
+        fromInput.value = toValue;
+      } else {
+        /* If destination not in Nereden list, reset to airport */
+        fromInput.value = 'Antalya Havaliman\u0131 (AYT)';
+      }
+
+      /* Find matching option in toInput for fromInput's previous value */
+      var toOption = Array.prototype.find.call(toInput.options, function (o) {
+        return o.value === tmpValue;
+      });
+      if (toOption) {
+        toInput.value = tmpValue;
+      } else {
+        toInput.value = '';
+      }
     });
   }
 

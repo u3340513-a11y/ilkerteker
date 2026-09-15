@@ -613,24 +613,105 @@ p {
   font-family: var(--font-body);
   font-size: 0.95rem;
   width: 100%;
-  color: var(--color-text);
-}
-
-.field select,
-.field input[type="date"],
-.field input[type="time"] {
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
-  padding: 12px 14px;
-  background: var(--color-bg-soft);
+  width: 100%;
+  padding: 12px 14px 12px 40px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
   font-family: var(--font-body);
   font-size: 0.95rem;
-  color: var(--color-text);
+  color: var(--color-dark);
+  background: #fff;
+  transition: var(--transition);
+  outline: none;
+}
+
+.input-icon input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(232, 161, 61, 0.12);
+}
+
+/* Select dropdown styling */
+.select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.select-wrapper svg {
+  position: absolute;
+  left: 14px;
+  color: var(--color-primary);
+  pointer-events: none;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.select-wrapper select {
+  width: 100%;
+  padding: 12px 36px 12px 40px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-dark);
+  background: #fff;
+  transition: var(--transition);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.select-wrapper select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(232, 161, 61, 0.12);
+}
+
+.select-wrapper select:invalid {
+  color: var(--color-text-muted);
+}
+
+/* Custom chevron arrow for select */
+.select-wrapper::after {
+  content: '';
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--color-text-light);
+  pointer-events: none;
+}
+
+.select-wrapper select optgroup {
+  font-weight: 600;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.select-wrapper select option {
+  font-weight: 400;
+  color: var(--color-dark);
+  font-size: 0.93rem;
+  padding: 6px 0;
+}
+
+.field input[type="date"],
+.field input[type="time"] {
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: #fff;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-dark);
   outline: none;
   transition: var(--transition);
 }
 
-.field select:focus,
 .field input[type="date"]:focus,
 .field input[type="time"]:focus {
   border-color: var(--color-primary);
