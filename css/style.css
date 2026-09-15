@@ -719,6 +719,386 @@ p {
 }
 
 /* ==========================================================================
+   Vehicle Results — Pricing Cards
+   ========================================================================== */
+.vehicle-results {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.vehicle-results[hidden] {
+  display: none;
+}
+
+.vehicle-results-heading {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.vehicle-results-heading h3 {
+  font-size: 1.4rem;
+  color: var(--color-dark);
+  margin-bottom: 8px;
+}
+
+.vehicle-results-heading p {
+  font-size: 0.88rem;
+  color: var(--color-text-light);
+  margin: 0;
+  padding: 10px 20px;
+  display: inline-block;
+  background: var(--color-bg-soft);
+  border-radius: 50px;
+  border: 1px solid var(--color-border-light);
+}
+
+.vehicle-results-route {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.vehicle-results-route svg {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+/* --- Vehicle Card --- */
+.vehicle-card {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.vehicle-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary);
+}
+
+.vehicle-card-header {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: #fff;
+  padding: 14px 24px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: 0.3px;
+}
+
+.vehicle-card-header svg {
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.vehicle-card-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding: 0;
+}
+
+.vehicle-card-features {
+  padding: 24px;
+  border-right: 1px solid var(--color-border-light);
+}
+
+.vehicle-card-features-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  margin-bottom: 14px;
+  display: block;
+}
+
+.vehicle-features-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 20px;
+}
+
+.vehicle-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: var(--color-text);
+  line-height: 1.4;
+}
+
+.vehicle-feature-item svg {
+  color: var(--color-primary);
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.vehicle-card-pricing-area {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+/* --- Pricing Radio Buttons --- */
+.vehicle-pricing-options {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.vehicle-pricing-option {
+  flex: 1;
+  position: relative;
+}
+
+.vehicle-pricing-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.vehicle-pricing-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 12px;
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: var(--transition);
+  background: var(--color-bg-soft);
+  text-align: center;
+}
+
+.vehicle-pricing-label:hover {
+  border-color: var(--color-primary-light);
+}
+
+.vehicle-pricing-option input[type="radio"]:checked + .vehicle-pricing-label {
+  border-color: var(--color-primary);
+  background: var(--color-primary-bg);
+  box-shadow: 0 0 0 3px rgba(232, 161, 61, 0.12);
+}
+
+.vehicle-pricing-type {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vehicle-pricing-type .radio-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  transition: var(--transition);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.vehicle-pricing-option input[type="radio"]:checked + .vehicle-pricing-label .radio-dot {
+  border-color: var(--color-primary);
+}
+
+.vehicle-pricing-option input[type="radio"]:checked + .vehicle-pricing-label .radio-dot::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+
+.vehicle-pricing-amount {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-dark);
+}
+
+.vehicle-pricing-note {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 6px 12px;
+  background: var(--color-bg-soft);
+  border-radius: 8px;
+  border: 1px solid var(--color-border-light);
+  line-height: 1.4;
+}
+
+.vehicle-card-desc {
+  font-size: 0.82rem;
+  color: var(--color-primary-dark);
+  text-align: center;
+  padding: 10px 16px;
+  background: var(--color-primary-bg);
+  border-radius: 8px;
+  line-height: 1.5;
+  font-weight: 500;
+  border: 1px solid rgba(232, 161, 61, 0.15);
+}
+
+/* --- Card Footer / Action --- */
+.vehicle-card-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--color-border-light);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-vehicle-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 32px;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 4px 16px rgba(232, 161, 61, 0.3);
+}
+
+.btn-vehicle-whatsapp:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(232, 161, 61, 0.4);
+}
+
+/* --- Popular Badge --- */
+.vehicle-badge-popular {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 50px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --- Divider Banner --- */
+.vehicle-divider-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 24px;
+  background: var(--color-primary-bg);
+  border: 1px solid rgba(232, 161, 61, 0.2);
+  border-radius: var(--radius);
+  color: var(--color-primary-dark);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.vehicle-divider-banner svg {
+  flex-shrink: 0;
+  animation: bounceDown 1.5s ease infinite;
+}
+
+@keyframes bounceDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+/* --- No Results --- */
+.vehicle-no-results {
+  text-align: center;
+  padding: 48px 24px;
+  background: var(--color-bg-soft);
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border-light);
+}
+
+.vehicle-no-results svg {
+  color: var(--color-text-muted);
+  margin-bottom: 16px;
+}
+
+.vehicle-no-results h4 {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+.vehicle-no-results p {
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+/* --- Vehicle Results Responsive --- */
+@media (max-width: 768px) {
+  .vehicle-card-body {
+    grid-template-columns: 1fr;
+  }
+
+  .vehicle-card-features {
+    border-right: none;
+    border-bottom: 1px solid var(--color-border-light);
+    padding: 20px;
+  }
+
+  .vehicle-features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vehicle-card-pricing-area {
+    padding: 20px;
+  }
+
+  .vehicle-pricing-options {
+    flex-direction: row;
+  }
+
+  .vehicle-card-footer {
+    justify-content: center;
+  }
+
+  .btn-vehicle-whatsapp {
+    width: 100%;
+  }
+
+  .vehicle-card-header {
+    font-size: 0.88rem;
+    padding: 12px 18px;
+    flex-wrap: wrap;
+  }
+}
+
+/* ==========================================================================
    Page Banner (for sub-pages)
    ========================================================================== */
 .page-banner {
