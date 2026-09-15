@@ -448,6 +448,117 @@
     });
   }
 
+
+  /* ---- Passenger Picker ---- */
+  var paxTrigger = document.getElementById('paxTrigger');
+  var paxDropdown = document.getElementById('paxDropdown');
+  var paxSummary = document.getElementById('paxSummary');
+  var paxDone = document.getElementById('paxDone');
+
+  /** Passenger counts state */
+  var paxCounts = { adult: 1, child: 0, baby: 0 };
+
+  /**
+   * Rebuilds the summary text shown on the trigger button and updates
+   * the hidden inputs so form submission captures all counts.
+   */
+  function updatePaxSummary() {
+    var parts = [];
+    if (paxCounts.adult > 0) parts.push(paxCounts.adult + ' Yetişkin');
+    if (paxCounts.child > 0) parts.push(paxCounts.child + ' Çocuk');
+    if (paxCounts.baby > 0) parts.push(paxCounts.baby + ' Bebek');
+    if (paxSummary) paxSummary.textContent = parts.join(', ') || '0 Yolcu';
+
+    var adultEl = document.getElementById('adultInput');
+    var childEl = document.getElementById('childInput');
+    var babyEl = document.getElementById('babyInput');
+    if (adultEl) adultEl.value = paxCounts.adult;
+    if (childEl) childEl.value = paxCounts.child;
+    if (babyEl) babyEl.value = paxCounts.baby;
+  }
+
+  /**
+   * Refreshes +/- button disabled states.
+   * Adults min = 1, children/babies min = 0. All max = 14 total.
+   */
+  function updatePaxButtons() {
+    var total = paxCounts.adult + paxCounts.child + paxCounts.baby;
+    var maxReached = total >= 14;
+
+    ['adult', 'child', 'baby'].forEach(function (type) {
+      var countEl = document.getElementById(type + 'Count');
+      if (countEl) countEl.textContent = paxCounts[type];
+
+      var decBtn = document.querySelector('.pax-btn[data-target="' + type + '"][data-action="dec"]');
+      var incBtn = document.querySelector('.pax-btn[data-target="' + type + '"][data-action="inc"]');
+
+      var min = type === 'adult' ? 1 : 0;
+      if (decBtn) decBtn.disabled = paxCounts[type] <= min;
+      if (incBtn) incBtn.disabled = maxReached;
+    });
+  }
+
+  function openPaxDropdown() {
+    if (!paxDropdown || !paxTrigger) return;
+    paxDropdown.hidden = false;
+    paxTrigger.setAttribute('aria-expanded', 'true');
+    updatePaxButtons();
+  }
+
+  function closePaxDropdown() {
+    if (!paxDropdown || !paxTrigger) return;
+    paxDropdown.hidden = true;
+    paxTrigger.setAttribute('aria-expanded', 'false');
+  }
+
+  if (paxTrigger) {
+    paxTrigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (paxDropdown.hidden) {
+        openPaxDropdown();
+      } else {
+        closePaxDropdown();
+      }
+    });
+  }
+
+  if (paxDone) {
+    paxDone.addEventListener('click', closePaxDropdown);
+  }
+
+  /* +/- counter buttons */
+  var paxBtns = document.querySelectorAll('.pax-btn');
+  paxBtns.forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var target = btn.getAttribute('data-target');
+      var action = btn.getAttribute('data-action');
+      var min = target === 'adult' ? 1 : 0;
+      var total = paxCounts.adult + paxCounts.child + paxCounts.baby;
+
+      if (action === 'inc' && total < 14) {
+        paxCounts[target]++;
+      } else if (action === 'dec' && paxCounts[target] > min) {
+        paxCounts[target]--;
+      }
+
+      updatePaxButtons();
+      updatePaxSummary();
+    });
+  });
+
+  /* Close when clicking outside */
+  document.addEventListener('click', function (e) {
+    var picker = document.getElementById('paxPicker');
+    if (picker && !picker.contains(e.target)) {
+      closePaxDropdown();
+    }
+  });
+
+  /* Initialize */
+  updatePaxSummary();
+  updatePaxButtons();
+
   /* ---- Swap from/to fields (select elements) ---- */
   var swapBtn = document.getElementById('swapBtn');
   var fromInput = document.getElementById('fromInput');
@@ -514,7 +625,14 @@
 
       var from = document.getElementById('fromInput').value.trim();
       var to = document.getElementById('toInput').value.trim();
-      var passengers = document.getElementById('passengers').value;
+      var adult = parseInt(document.getElementById('adultInput').value, 10) || 1;
+      var child = parseInt(document.getElementById('childInput').value, 10) || 0;
+      var baby = parseInt(document.getElementById('babyInput').value, 10) || 0;
+      var paxParts = [];
+      if (adult > 0) paxParts.push(adult + ' Yetişkin');
+      if (child > 0) paxParts.push(child + ' Çocuk');
+      if (baby > 0) paxParts.push(baby + ' Bebek');
+      var passengers = paxParts.join(', ') || '1 Yetişkin';
       var date = document.getElementById('pickupDate').value;
       var time = document.getElementById('pickupTime').value;
       var hasReturn = document.getElementById('returnToggle').checked;

@@ -1088,6 +1088,164 @@ p {
   letter-spacing: 0.5px;
 }
 
+/* --- Passenger Picker --- */
+.pax-picker {
+  position: relative;
+  width: 100%;
+}
+
+.pax-picker-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  background: #fff;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-dark);
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: left;
+}
+
+.pax-picker-trigger svg:first-child {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.pax-picker-trigger #paxSummary {
+  flex: 1;
+}
+
+.pax-picker-trigger:hover,
+.pax-picker-trigger[aria-expanded="true"] {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(232, 161, 61, 0.12);
+}
+
+.pax-chevron {
+  color: var(--color-text-light);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.pax-picker-trigger[aria-expanded="true"] .pax-chevron {
+  transform: rotate(180deg);
+}
+
+.pax-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  min-width: 260px;
+  background: #fff;
+  border: 1.5px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  z-index: 200;
+  padding: 8px 0 4px;
+}
+
+.pax-dropdown[hidden] {
+  display: none;
+}
+
+.pax-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.pax-row:last-of-type {
+  border-bottom: none;
+}
+
+.pax-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pax-label {
+  font-weight: 600;
+  font-size: 0.93rem;
+  color: var(--color-dark);
+}
+
+.pax-sub {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+.pax-counter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pax-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border);
+  background: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: var(--transition);
+  padding: 0;
+}
+
+.pax-btn:hover:not(:disabled) {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.pax-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.pax-count {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--color-dark);
+  min-width: 20px;
+  text-align: center;
+}
+
+.pax-done {
+  display: block;
+  width: calc(100% - 36px);
+  margin: 10px 18px 12px;
+  padding: 10px;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.pax-done:hover {
+  background: var(--color-primary-dark);
+}
+
 /* --- Divider Banner --- */
 .vehicle-divider-banner {
   display: flex;
