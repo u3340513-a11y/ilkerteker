@@ -699,6 +699,113 @@ p {
   padding: 6px 0;
 }
 
+/* Free-text location input with autocomplete */
+.location-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.location-field > svg {
+  position: absolute;
+  left: 14px;
+  color: var(--color-primary);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.location-field input {
+  width: 100%;
+  padding: 12px 14px 12px 40px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-dark);
+  background: #fff;
+  transition: var(--transition);
+  outline: none;
+  text-overflow: ellipsis;
+}
+
+.location-field input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(232, 161, 61, 0.12);
+}
+
+.location-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  max-height: 280px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+}
+
+.location-suggestions[hidden] {
+  display: none;
+}
+
+.location-option {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--color-dark);
+  font-size: 0.93rem;
+}
+
+.location-option:hover,
+.location-option[aria-selected="true"] {
+  background: rgba(232, 161, 61, 0.14);
+}
+
+.location-option-meta {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.location-suggestion-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.location-suggestion-btn {
+  padding: 10px 18px;
+  border: 1.5px solid var(--color-primary);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--color-dark);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.location-suggestion-btn:hover,
+.location-suggestion-btn:focus-visible {
+  background: var(--color-primary);
+  color: #fff;
+  outline: none;
+}
+
+
 .field input[type="date"],
 .field input[type="time"] {
   border: 1.5px solid var(--color-border);

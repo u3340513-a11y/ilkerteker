@@ -163,21 +163,6 @@
     'kalkan':          [120, 125, 140, 150, 160]
   };
 
-  /**
-   * Finds a pricing key for the given select value.
-   * Since dropdown values are now exact PRICING keys or the airport string,
-   * this is a direct lookup — no fuzzy matching needed.
-   *
-   * @param {string} value - The select option value
-   * @returns {string|null} The PRICING key, or null if airport/not found
-   */
-  function matchRegion(value) {
-    if (!value) return null;
-    var normalized = value.toLowerCase().trim();
-    if (PRICING[normalized] !== undefined) return normalized;
-    return null;
-  }
-
   /* ====================================================================
      SVG Icon Helpers
      ==================================================================== */
@@ -419,6 +404,106 @@
   }
 
   /* ====================================================================
+     Free-text Location Resolution (hotel / place / region / airport)
+     ==================================================================== */
+
+  /**
+   * Builds the text shown for a resolved location, adding the pricing
+   * region in parentheses when it differs from the name
+   * (e.g. "Rixos Premium Belek (Belek)").
+   *
+   * @param {Object} resolution - Result of LocationSearch.resolve()
+   * @returns {string} Display text
+   */
+  function buildRouteLabel(resolution) {
+    var label = resolution.label;
+    var region = resolution.location && resolution.location.region
+      ? LocationSearch.regionName(resolution.location.region)
+      : '';
+    if (region && region.toLowerCase() !== label.toLowerCase()) {
+      return label + ' (' + region + ')';
+    }
+    return label;
+  }
+
+  /**
+   * Determines the pricing region for a route. Prices exist only for
+   * airport ↔ region trips, so exactly one side must be the airport and the
+   * other a reliably matched place.
+   *
+   * @param {Object} fromRes - Resolution of the pickup text
+   * @param {Object} toRes - Resolution of the drop-off text
+   * @returns {string|null} PRICING key, or null if no automatic price exists
+   */
+  function findPricingRegion(fromRes, toRes) {
+    if (fromRes.status !== 'match' || toRes.status !== 'match') return null;
+    var fromIsAirport = fromRes.location.kind === 'airport';
+    var toIsAirport = toRes.location.kind === 'airport';
+    if (fromIsAirport === toIsAirport) return null;
+    return (fromIsAirport ? toRes : fromRes).location.region;
+  }
+
+  /**
+   * Renders a "no automatic price" card with a WhatsApp quote link that
+   * carries exactly what the customer typed.
+   *
+   * @param {HTMLElement} container - Results container
+   * @param {Object} quote - { from, to, passengers, date, time }
+   */
+  function renderQuoteFallback(container, quote) {
+    var message = 'Merhaba, transfer fiyat bilgisi almak istiyorum.\n\nNereden: ' + quote.from +
+      '\nNereye: ' + quote.to +
+      '\nYolcu: ' + quote.passengers +
+      '\nTarih: ' + quote.date +
+      '\nSaat: ' + quote.time;
+
+    container.innerHTML =
+      '<div class="vehicle-no-results">' +
+        SVG_SEARCH_BIG +
+        '<h4>Bu rota için fiyatı size özel hesaplayalım</h4>' +
+        '<p>' + escapeHtml(quote.from) + ' ' + SVG_ARROW_RIGHT + ' ' + escapeHtml(quote.to) + '</p>' +
+        '<p>Yazdığınız konum için otomatik fiyat bulunamadı. WhatsApp üzerinden anında teklif alın.</p>' +
+        '<a href="https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(message) +
+        '" target="_blank" rel="noopener" class="btn btn-whatsapp">' +
+        SVG_WHATSAPP + ' WhatsApp ile İletişim</a>' +
+      '</div>';
+    container.hidden = false;
+    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /**
+   * Renders "Did you mean...?" buttons for an ambiguous or misspelled
+   * location. Clicking a button fills the field and re-submits the form.
+   *
+   * @param {HTMLElement} container - Results container
+   * @param {HTMLFormElement} form - Booking form to re-submit
+   * @param {Object} pending - { inputId, typed, suggestions }
+   */
+  function renderSuggestionPrompt(container, form, pending) {
+    var buttons = pending.suggestions.map(function (location) {
+      return '<button type="button" class="location-suggestion-btn" data-value="' + escapeAttr(location.name) + '">' +
+        escapeHtml(location.name) + '</button>';
+    }).join('');
+
+    container.innerHTML =
+      '<div class="vehicle-no-results">' +
+        SVG_SEARCH_BIG +
+        '<h4>"' + escapeHtml(pending.typed) + '" ile eşleşen yerler</h4>' +
+        '<p>Bunlardan hangisini kastettiniz? Lütfen birini seçin:</p>' +
+        '<div class="location-suggestion-list">' + buttons + '</div>' +
+      '</div>';
+    container.hidden = false;
+    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    container.querySelectorAll('.location-suggestion-btn').forEach(function (button) {
+      button.addEventListener('click', function () {
+        document.getElementById(pending.inputId).value = button.getAttribute('data-value');
+        form.dispatchEvent(new Event('submit', { cancelable: true }));
+      });
+    });
+  }
+
+  /* ====================================================================
      DOM Ready — Event Binding
      ==================================================================== */
 
@@ -566,32 +651,16 @@
 
   if (swapBtn && fromInput && toInput) {
     swapBtn.addEventListener('click', function () {
-      var tmpValue = fromInput.value;
-      var tmpText = fromInput.options[fromInput.selectedIndex] ? fromInput.options[fromInput.selectedIndex].text : '';
-
-      /* Find matching option in fromInput for toInput's current value */
-      var toValue = toInput.value;
-      var fromOption = Array.prototype.find.call(fromInput.options, function (o) {
-        return o.value === toValue;
-      });
-
-      if (fromOption) {
-        fromInput.value = toValue;
-      } else {
-        /* If destination not in Nereden list, reset to airport */
-        fromInput.value = 'Antalya Havaliman\u0131 (AYT)';
-      }
-
-      /* Find matching option in toInput for fromInput's previous value */
-      var toOption = Array.prototype.find.call(toInput.options, function (o) {
-        return o.value === tmpValue;
-      });
-      if (toOption) {
-        toInput.value = tmpValue;
-      } else {
-        toInput.value = '';
-      }
+      var previousFrom = fromInput.value;
+      fromInput.value = toInput.value;
+      toInput.value = previousFrom;
     });
+  }
+
+  /* ---- Location autocomplete (hotel / place / region / airport) ---- */
+  if (fromInput && toInput) {
+    LocationSearch.attach(fromInput, document.getElementById('fromList'));
+    LocationSearch.attach(toInput, document.getElementById('toList'));
   }
 
   /* ---- Toggle return date/time row ---- */
@@ -645,40 +714,49 @@
         return;
       }
 
-      /* Try matching destination to a region */
-      var regionKey = matchRegion(to) || matchRegion(from);
+      var fromRes = LocationSearch.resolve(from);
+      var toRes = LocationSearch.resolve(to);
+      var container = document.getElementById('vehicleResults');
+
+      /* Ambiguous or misspelled text: ask the customer to confirm */
+      var pending = [
+        { inputId: 'fromInput', res: fromRes },
+        { inputId: 'toInput', res: toRes }
+      ].filter(function (item) { return item.res.status === 'suggest'; })[0];
+
+      if (pending) {
+        if (container) {
+          renderSuggestionPrompt(container, bookingForm, {
+            inputId: pending.inputId,
+            typed: pending.res.label,
+            suggestions: pending.res.suggestions
+          });
+        }
+        return;
+      }
+
+      var regionKey = findPricingRegion(fromRes, toRes);
 
       if (!regionKey) {
-        /* No region match — show helpful message and WhatsApp fallback */
-        var container = document.getElementById('vehicleResults');
         if (container) {
-          container.innerHTML =
-            '<div class="vehicle-no-results">' +
-              SVG_SEARCH_BIG +
-              '<h4>Bölge bulunamadı</h4>' +
-              '<p>Girdiğiniz konum için otomatik fiyatlandırma bulunamadı. Lütfen WhatsApp üzerinden bizimle iletişime geçin.</p>' +
-              '<a href="https://wa.me/' + WHATSAPP_NUMBER + '?text=' +
-              encodeURIComponent(
-                'Merhaba, transfer fiyat bilgisi almak istiyorum.\n\nNereden: ' + from +
-                '\nNereye: ' + to +
-                '\nYolcu: ' + passengers +
-                '\nTarih: ' + formatDate(date) +
-                '\nSaat: ' + time
-              ) +
-              '" target="_blank" rel="noopener" class="btn btn-whatsapp">' +
-              SVG_WHATSAPP + ' WhatsApp ile İletişim</a>' +
-            '</div>';
-          container.hidden = false;
-          container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          renderQuoteFallback(container, {
+            from: from,
+            to: to,
+            passengers: passengers,
+            date: formatDate(date),
+            time: time
+          });
         }
         return;
       }
 
       var prices = PRICING[regionKey];
+      var fromLabel = buildRouteLabel(fromRes);
+      var toLabel = buildRouteLabel(toRes);
 
       var formData = {
-        from: from,
-        to: to,
+        from: fromLabel,
+        to: toLabel,
         passengers: passengers,
         date: formatDate(date),
         time: time,
@@ -688,7 +766,7 @@
         note: note
       };
 
-      renderVehicleResults(prices, from, to, formData);
+      renderVehicleResults(prices, fromLabel, toLabel, formData);
     });
   }
 
