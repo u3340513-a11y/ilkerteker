@@ -40,7 +40,7 @@
 
   var KIND_LABELS = { airport: 'Havalimanı', region: 'Bölge', hotel: 'Otel', place: 'Harita önerisi' };
   var REMOTE_DEBOUNCE_MS = 300;
-  var MAX_REMOTE_ITEMS = 5;
+  var MAX_REMOTE_ITEMS = 7;
   /* Address segments that name a country/province, never a pricing region. */
   var GENERIC_ADDRESS_SEGMENTS = ['turkiye', 'turkey', 'antalya', 'antalya ili', 'antalya province'];
   var COUNTRY_SEGMENTS = ['turkiye', 'turkey'];

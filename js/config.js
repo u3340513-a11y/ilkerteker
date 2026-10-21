@@ -19,8 +19,8 @@
 
   global.SiteConfig = Object.freeze({
     whatsappNumber: '905069374638',
-    yandexMapsApiKey: '',
-    yandexSuggestApiKey: '',
+    yandexMapsApiKey: '52a0e225-dbb9-40aa-949d-946c1e0c4e03',
+    yandexSuggestApiKey: 'ff85aa07-0a78-437d-a868-45d709fd8a91',
     photonApiUrl: 'https://photon.komoot.io/api/'
   });
 })(window);

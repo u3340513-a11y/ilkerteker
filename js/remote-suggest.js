@@ -24,10 +24,10 @@
 
   var SCRIPT_URL = 'https://api-maps.yandex.ru/2.1/';
   var LANGUAGE = 'tr_TR';
-  var MAX_RESULTS = 5;
+  var MAX_RESULTS = 7;
   var MIN_QUERY_LENGTH = 3;
-  /* Antalya province bounding box [south-west, north-east]; used to rank local results first. */
-  var ANTALYA_BOUNDS = [[35.9, 29.0], [37.5, 33.0]];
+  /* Türkiye bounding box [south-west, north-east]; biases Yandex ranking to the whole country. */
+  var TURKEY_BOUNDS = [[35.8, 25.6], [42.2, 44.9]];
 
   /* Photon: Türkiye bounding box (minLon,minLat,maxLon,maxLat) and ranking bias point (Antalya). */
   var TURKEY_BBOX = '25.6,35.8,44.9,42.2';
@@ -89,7 +89,7 @@
   function queryYandex(typed) {
     return load()
       .then(function () {
-        return global.ymaps.suggest(typed, { results: MAX_RESULTS, boundedBy: ANTALYA_BOUNDS, strictBounds: false });
+        return global.ymaps.suggest(typed, { results: MAX_RESULTS, boundedBy: TURKEY_BOUNDS, strictBounds: false });
       })
       .then(function (items) {
         return items.map(function (item) { return { displayName: String(item.displayName) }; });
