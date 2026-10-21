@@ -408,7 +408,6 @@
     });
     input.addEventListener('focus', function () {
       input.select();
-      if (global.RemoteSuggest) global.RemoteSuggest.preload();
       render();
     });
     input.addEventListener('blur', function () { setExpanded(false); });
