@@ -31,7 +31,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20261021">
+  <link rel="stylesheet" href="css/style.css?v=20261031">
+  <link rel="stylesheet" href="css/checkout.css?v=20261030">
 
   <script type="application/ld+json">
   {
@@ -100,7 +101,7 @@
   <header class="site-header" id="siteHeader">
     <div class="container header-inner">
       <a href="index.html" class="logo" aria-label="İlker Teker VIP Transfer Ana Sayfa">
-        <img src="img/ilkerteker.png" alt="İlker Teker VIP Transfer Logo">
+        <img src="img/logo.png" alt="İlker Teker VIP Transfer Logo" width="206" height="48">
       </a>
 
       <nav class="main-nav" id="mainNav">
@@ -135,8 +136,7 @@
     <h1 class="sr-only">Profesyonel Havalimanı Transfer Hizmetleri - Antalya VIP Transfer</h1>
 
     <div class="hero-image hero-slider" id="heroSlider" aria-roledescription="carousel" aria-label="Araç filomuzdan görseller">
-      <img class="hero-slide is-active" src="img/hero-bg.jpg" alt="İlker Teker VIP Transfer - Antalya havalimanı VIP transfer, profesyonel transfer hizmetleri" loading="eager">
-      <img class="hero-slide" src="img/hero/slide-van-side.jpg" alt="Mercedes Vito VIP transfer aracı yan görünüm" width="1600" height="1074" loading="lazy">
+      <img class="hero-slide is-active" src="img/hero/slide-van-side.jpg" alt="İlker Teker VIP Transfer - Mercedes Vito VIP transfer aracı, Antalya havalimanı transfer hizmetleri" width="1600" height="1074" loading="eager">
       <img class="hero-slide" src="img/hero/slide-interior-tv.jpg" alt="VIP transfer aracı lüks deri koltuklu iç mekan" width="1600" height="1200" loading="lazy">
       <img class="hero-slide" src="img/hero/slide-interior-lounge.jpg" alt="VIP transfer aracı ambiyans aydınlatmalı yolcu bölümü" width="1600" height="1200" loading="lazy">
       <img class="hero-slide" src="img/hero/slide-van-front.jpg" alt="Siyah Mercedes VIP transfer aracı ön görünüm" width="1600" height="1600" loading="lazy">
@@ -154,7 +154,7 @@
     <form class="booking-form" id="bookingForm" aria-label="Transfer rezervasyon formu">
       <div class="booking-row">
         <div class="field field-from">
-          <label for="fromInput">Nereden <span class="field-hint">(Otel, bölge veya havalimanı yazın)</span></label>
+          <label for="fromInput">Nereden</label>
           <div class="location-field">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 14.5 9 2.5 2.5 0 0 1 12 11.5z"/></svg>
             <input type="text" id="fromInput" name="from" value="Antalya Havalimanı (AYT)" placeholder="Örn: Antalya Havalimanı" required maxlength="100" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="fromList">
@@ -167,16 +167,14 @@
         </button>
 
         <div class="field field-to">
-          <label for="toInput">Nereye <span class="field-hint">(Otel, bölge veya havalimanı yazın)</span></label>
+          <label for="toInput">Nereye</label>
           <div class="location-field">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/></svg>
             <input type="text" id="toInput" name="to" placeholder="Örn: Rixos Premium Belek" required maxlength="100" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="toList">
             <ul class="location-suggestions" id="toList" role="listbox" aria-label="Nereye önerileri" hidden></ul>
           </div>
         </div>
-      </div>
 
-      <div class="booking-row booking-row-details">
         <div class="field field-sm">
           <label>Yolcular</label>
           <div class="pax-picker" id="paxPicker">
@@ -231,49 +229,148 @@
           <input type="hidden" id="babyInput" name="baby" value="0">
         </div>
 
-        <div class="field field-sm">
-          <label for="pickupDate">Alınış Tarihi</label>
-          <input type="date" id="pickupDate" name="pickupDate" required>
-        </div>
-
-        <div class="field field-sm">
-          <label for="pickupTime">Alınış Saati</label>
-          <input type="time" id="pickupTime" name="pickupTime" required>
-        </div>
-
-        <div class="field field-toggle">
-          <label class="switch">
-            <input type="checkbox" id="returnToggle" name="returnToggle">
-            <span class="slider"></span>
-          </label>
-          <span>Dönüş Ekle</span>
-        </div>
-
         <button type="submit" class="btn btn-search">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
-          Fiyat Al
+          Rezervasyon Ara
         </button>
-      </div>
-
-      <div class="booking-row booking-row-return" id="returnRow" hidden>
-        <div class="field field-sm">
-          <label for="returnDate">Dönüş Tarihi</label>
-          <input type="date" id="returnDate" name="returnDate">
-        </div>
-        <div class="field field-sm">
-          <label for="returnTime">Dönüş Saati</label>
-          <input type="time" id="returnTime" name="returnTime">
-        </div>
-        <div class="field field-grow">
-          <label for="note">Ek Not <span class="field-hint">(opsiyonel)</span></label>
-          <input type="text" id="note" name="note" placeholder="Uçuş numarası, özel istekleriniz vb.">
-        </div>
       </div>
     </form>
 
     <!-- Vehicle Results (populated by JS after form submit) -->
     <div id="vehicleResults" class="vehicle-results" hidden></div>
   </div>
+
+  <!-- Checkout (step 3: details + summary) -->
+  <section class="section checkout" id="checkout" aria-labelledby="checkoutTitle" hidden>
+    <div class="container">
+      <button type="button" class="checkout-back" id="checkoutBack">← Araç seçimine dön</button>
+      <h2 class="sr-only" id="checkoutTitle">Rezervasyon Bilgileri</h2>
+
+      <form class="checkout-grid" id="checkoutForm" novalidate>
+        <div class="checkout-main">
+          <fieldset class="checkout-step">
+            <legend><span class="step-badge" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg></span>Seyahat ve Uçuş Bilgileri</legend>
+            <div class="checkout-fields">
+              <div class="form-field">
+                <label for="transferDate">Transfer Tarihi <abbr title="Zorunlu">*</abbr></label>
+                <input type="date" id="transferDate" name="transferDate" required>
+              </div>
+              <div class="form-field">
+                <label for="transferTime">Transfer Saati <abbr title="Zorunlu">*</abbr></label>
+                <input type="time" id="transferTime" name="transferTime" required>
+              </div>
+              <div class="form-field">
+                <label for="flightNo">Uçuş No <abbr title="Zorunlu">*</abbr></label>
+                <input type="text" id="flightNo" name="flightNo" placeholder="Örn: XQ0707" required maxlength="12" autocomplete="off">
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="checkout-step">
+            <legend><span class="step-badge" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg></span>Dönüş Transferi</legend>
+            <div class="toggle-control">
+              <label class="switch"><input type="checkbox" id="returnToggle" aria-label="Dönüş transferi ekle"><span class="slider"></span></label>
+              <span class="toggle-state" data-toggle-for="returnToggle" aria-hidden="true">Hayır</span>
+            </div>
+            <div class="checkout-fields checkout-fields-reveal" id="returnFields" hidden>
+              <div class="form-field">
+                <label for="returnDate">Dönüş Tarihi <abbr title="Zorunlu">*</abbr></label>
+                <input type="date" id="returnDate" name="returnDate">
+              </div>
+              <div class="form-field">
+                <label for="returnTime">Dönüş Saati <abbr title="Zorunlu">*</abbr></label>
+                <input type="time" id="returnTime" name="returnTime">
+              </div>
+              <div class="form-field">
+                <label for="returnFlightNo">Dönüş Uçuş No</label>
+                <input type="text" id="returnFlightNo" name="returnFlightNo" placeholder="Örn: XQ0708" maxlength="12" autocomplete="off">
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="checkout-step">
+            <legend><span class="step-badge" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></span>Çocuk Koltuğu</legend>
+            <div class="toggle-control">
+              <label class="switch"><input type="checkbox" id="childSeatToggle" aria-label="Çocuk koltuğu ekle"><span class="slider"></span></label>
+              <span class="toggle-state" data-toggle-for="childSeatToggle" aria-hidden="true">Hayır</span>
+            </div>
+            <div class="checkout-fields checkout-fields-reveal" id="childSeatFields" hidden>
+              <div class="form-field">
+                <label for="childSeatCount">Koltuk Sayısı</label>
+                <select id="childSeatCount" name="childSeatCount">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                </select>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="checkout-step">
+            <legend><span class="step-badge" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-5 14H7v-2h7zm3-4H7v-2h10zm0-4H7V7h10z"/></svg></span>Extralar ve Notunuz</legend>
+            <div class="extra-row">
+              <span>İsimli Karşılama (isim tabelasıyla)</span>
+              <div class="toggle-control">
+              <label class="switch"><input type="checkbox" id="welcomeSignToggle" aria-label="İsimli karşılama ekle"><span class="slider"></span></label>
+              <span class="toggle-state" data-toggle-for="welcomeSignToggle" aria-hidden="true">Hayır</span>
+            </div>
+            </div>
+            <div class="form-field">
+              <label for="specialNote">Özel Notunuz</label>
+              <textarea id="specialNote" name="specialNote" rows="4" maxlength="500" placeholder="Özel talepleriniz"></textarea>
+            </div>
+          </fieldset>
+
+          <fieldset class="checkout-step">
+            <legend><span class="step-badge" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-3.87 3.58-6 8-6s8 2.13 8 6z"/></svg></span>Kişi Bilgileri</legend>
+            <div class="checkout-fields">
+              <div class="form-field">
+                <label for="customerName">Adınız Soyadınız <abbr title="Zorunlu">*</abbr></label>
+                <input type="text" id="customerName" name="customerName" required maxlength="80" autocomplete="name">
+              </div>
+              <div class="form-field">
+                <label for="customerEmail">E-Posta Adresi <abbr title="Zorunlu">*</abbr></label>
+                <input type="email" id="customerEmail" name="customerEmail" required maxlength="100" autocomplete="email" placeholder="mail@mail.com">
+              </div>
+              <div class="form-field">
+                <label for="customerPhone">Telefon No <abbr title="Zorunlu">*</abbr></label>
+                <input type="tel" id="customerPhone" name="customerPhone" required maxlength="20" autocomplete="tel" placeholder="+90 5xx xxx xx xx">
+              </div>
+            </div>
+          </fieldset>
+
+          <p class="checkout-error" id="checkoutError" role="alert" hidden></p>
+        </div>
+
+        <aside class="checkout-summary" aria-label="Rezervasyon detayları">
+          <h3 class="summary-title">Rezervasyon Detayları</h3>
+          <img class="summary-vehicle" src="img/hero/slide-van-side.jpg" alt="İlker Teker VIP Transfer aracı" width="1600" height="1074" loading="lazy">
+          <dl class="summary-list">
+            <div><dt>Transfer Yönü</dt><dd id="sumDirection"></dd></div>
+            <div><dt>Alış Noktası</dt><dd id="sumFrom"></dd></div>
+            <div><dt>Transfer Noktası</dt><dd id="sumTo"></dd></div>
+            <div><dt>Araç Seçimi</dt><dd id="sumVehicle"></dd></div>
+            <div><dt>Kişi Sayısı</dt><dd id="sumPassengers"></dd></div>
+            <div><dt>Transfer Tipi</dt><dd id="sumTripType"></dd></div>
+          </dl>
+          <div class="summary-total"><span>TOPLAM TUTAR</span><strong id="sumTotal"></strong></div>
+
+          <fieldset class="payment-options">
+            <legend class="sr-only">Ödeme yöntemi</legend>
+            <label><input type="radio" name="paymentMethod" value="Araçta Nakit Ödeme" checked> Araçta Nakit Ödeme</label>
+            <label><input type="radio" name="paymentMethod" value="Kredi Kartı ile Ödeme"> Kredi Kartı ile Ödeme</label>
+          </fieldset>
+
+          <label class="consent">
+            <input type="checkbox" id="checkoutConsent" required>
+            <span>Girdiğim bilgilerin doğru olduğunu ve rezervasyon talebimin WhatsApp üzerinden iletilmesini onaylıyorum.</span>
+          </label>
+
+          <button type="submit" class="btn btn-checkout">Rezervasyonu Tamamla</button>
+        </aside>
+      </form>
+    </div>
+  </section>
 
   <!-- Value Badges -->
   <section class="value-badges">
@@ -347,6 +444,203 @@
           <p>Her detayı düşünülmüş, kişiye özel bir transfer deneyimi sunuyoruz.</p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Popüler Bölgeler -->
+  <section class="section popular-regions" id="populerBolgeler">
+    <div class="container">
+      <span class="section-eyebrow">Popüler Bölgeler</span>
+      <h2 class="section-title section-title-centered">Antalya Popüler Bölgelerine Transfer</h2>
+      <p class="section-desc section-desc-centered">Antalya Havalimanı'ndan en çok tercih edilen tatil bölgelerine sabit ve net fiyatlarla VIP transfer. Bölgeye tıklayın, rezervasyon formu otomatik dolsun.</p>
+
+      <ul class="popular-grid" aria-label="Popüler transfer bölgeleri">
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Antalya Merkez">
+              <span class="region-media">
+                <img src="img/regions/merkez.webp" alt="Antalya Merkez transfer - Antalya Havalimanı'ndan Antalya Merkez bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>1750 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Antalya Merkez</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Konyaaltı">
+              <span class="region-media">
+                <img src="img/regions/konyaalti.webp" alt="Konyaaltı transfer - Antalya Havalimanı'ndan Konyaaltı bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>2000 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Konyaaltı</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Beldibi">
+              <span class="region-media">
+                <img src="img/regions/beldibi.webp" alt="Beldibi transfer - Antalya Havalimanı'ndan Beldibi bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>3000 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Beldibi</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Göynük">
+              <span class="region-media">
+                <img src="img/regions/goynuk.webp" alt="Göynük transfer - Antalya Havalimanı'ndan Göynük bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>3000 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Göynük</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Kemer">
+              <span class="region-media">
+                <img src="img/regions/kemer.webp" alt="Kemer transfer - Antalya Havalimanı'ndan Kemer bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>3000 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Kemer</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Tekirova">
+              <span class="region-media">
+                <img src="img/regions/tekirova.webp" alt="Tekirova transfer - Antalya Havalimanı'ndan Tekirova bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>3500 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Tekirova</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Kundu">
+              <span class="region-media">
+                <img src="img/regions/kundu.webp" alt="Kundu transfer - Antalya Havalimanı'ndan Kundu bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>1750 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Kundu</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Belek">
+              <span class="region-media">
+                <img src="img/regions/belek.webp" alt="Belek transfer - Antalya Havalimanı'ndan Belek bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>2250 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Belek</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Kızılağaç">
+              <span class="region-media">
+                <img src="img/regions/kizilagac.webp" alt="Kızılağaç transfer - Antalya Havalimanı'ndan Kızılağaç bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>3250 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Kızılağaç</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Evrenseki">
+              <span class="region-media">
+                <img src="img/regions/evrenseki.webp" alt="Evrenseki transfer - Antalya Havalimanı'ndan Evrenseki bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>3000 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Evrenseki</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Çolaklı">
+              <span class="region-media">
+                <img src="img/regions/colakli.webp" alt="Çolaklı transfer - Antalya Havalimanı'ndan Çolaklı bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>3000 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Çolaklı</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Kumköy">
+              <span class="region-media">
+                <img src="img/regions/kumkoy.webp" alt="Kumköy transfer - Antalya Havalimanı'ndan Kumköy bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>3000 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Kumköy</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Side">
+              <span class="region-media">
+                <img src="img/regions/side.webp" alt="Side transfer - Antalya Havalimanı'ndan Side bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>3000 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Side</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Okurcalar">
+              <span class="region-media">
+                <img src="img/regions/okurcalar.webp" alt="Okurcalar transfer - Antalya Havalimanı'ndan Okurcalar bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>3500 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Okurcalar</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="İncekum">
+              <span class="region-media">
+                <img src="img/regions/incekum.webp" alt="İncekum transfer - Antalya Havalimanı'ndan İncekum bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>3750 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>İncekum</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Türkler">
+              <span class="region-media">
+                <img src="img/regions/turkler.webp" alt="Türkler transfer - Antalya Havalimanı'ndan Türkler bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>3750 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Türkler</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Konaklı">
+              <span class="region-media">
+                <img src="img/regions/konakli.webp" alt="Konaklı transfer - Antalya Havalimanı'ndan Konaklı bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>3750 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Konaklı</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Alanya">
+              <span class="region-media">
+                <img src="img/regions/alanya.webp" alt="Alanya transfer - Antalya Havalimanı'ndan Alanya bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>4000 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Alanya</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Mahmutlar">
+              <span class="region-media">
+                <img src="img/regions/mahmutlar.webp" alt="Mahmutlar transfer - Antalya Havalimanı'ndan Mahmutlar bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>4500 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Mahmutlar</b> Transfer</span>
+            </a>
+          </li>
+          <li>
+            <a class="region-card" href="#bookingForm" data-region-name="Kargıcak">
+              <span class="region-media">
+                <img src="img/regions/kargicak.webp" alt="Kargıcak transfer - Antalya Havalimanı'ndan Kargıcak bölgesine VIP transfer" width="640" height="480" loading="lazy">
+                <span class="region-price"><strong>4500 ₺</strong><small>Başlayan Fiyatlar</small></span>
+              </span>
+              <span class="region-name"><b>Kargıcak</b> Transfer</span>
+            </a>
+          </li>
+      </ul>
+
+      <div class="popular-actions">
+        <a href="#bolgeler" class="btn btn-primary">Tüm Bölgeler</a>
+      </div>
+
     </div>
   </section>
 
@@ -534,7 +828,7 @@
   <footer class="site-footer">
     <div class="container footer-inner">
       <div class="footer-brand">
-        <img src="img/ilkerteker.png" alt="İlker Teker VIP Transfer Logo" width="160" height="55">
+        <img src="img/logo.png" alt="İlker Teker VIP Transfer Logo" width="189" height="44">
         <p>Antalya'da güvenilir, konforlu ve zamanında VIP transfer hizmeti. Havalimanından otelinize, otelinizden istediğiniz her noktaya profesyonel hizmet.</p>
       </div>
 
@@ -572,8 +866,11 @@
     <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 4l-8 8h5v8h6v-8h5z"/></svg>
   </button>
 
-  <script src="js/locations.js"></script>
-  <script src="js/location-search.js"></script>
-  <script src="js/main.js?v=20261021"></script>
+  <script src="js/config.js?v=20261031"></script>
+  <script src="js/locations.js?v=20261031"></script>
+  <script src="js/remote-suggest.js?v=20261031"></script>
+  <script src="js/location-search.js?v=20261031"></script>
+  <script src="js/checkout.js?v=20261031"></script>
+  <script src="js/main.js?v=20261031"></script>
 </body>
 </html>

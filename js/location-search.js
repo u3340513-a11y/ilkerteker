@@ -11,8 +11,11 @@
  *       status: 'match' | 'suggest' | 'none'
  *   regionName(regionKey)       -> display name of a pricing region
  *   attach(inputEl, listEl)     -> binds the autocomplete dropdown
+ *   resolveInput(inputEl)       -> like resolve(), but honours a suggestion picked from the dropdown
+ *   swapSelections(a, b)        -> swaps picked-suggestion state between two inputs
  *
  * Depends on: window.TransferLocations (locations.js)
+ * Optional:   window.RemoteSuggest (remote-suggest.js) for map-based place suggestions
  */
 (function (global) {
   'use strict';
@@ -35,7 +38,12 @@
   var MAX_DROPDOWN_ITEMS = 7;
   var DEFAULT_REGION_COUNT = 6;
 
-  var KIND_LABELS = { airport: 'Havalimanı', region: 'Bölge', hotel: 'Otel' };
+  var KIND_LABELS = { airport: 'Havalimanı', region: 'Bölge', hotel: 'Otel', place: 'Harita önerisi' };
+  var REMOTE_DEBOUNCE_MS = 300;
+  var MAX_REMOTE_ITEMS = 5;
+  /* Address segments that name a country/province, never a pricing region. */
+  var GENERIC_ADDRESS_SEGMENTS = ['turkiye', 'turkey', 'antalya', 'antalya ili', 'antalya province'];
+  var COUNTRY_SEGMENTS = ['turkiye', 'turkey'];
 
   /**
    * Lowercases (Turkish rules), strips diacritics and punctuation so that
@@ -209,6 +217,60 @@
     };
   }
 
+  var regionTerms = catalog.LOCATIONS
+    .filter(function (location) { return location.kind === 'region'; })
+    .map(function (location) {
+      var terms = [location.name].concat(location.aliases).map(normalize).filter(function (term) {
+        return term && GENERIC_ADDRESS_SEGMENTS.indexOf(term) === -1;
+      });
+      return { region: location.region, terms: terms };
+    });
+
+  /**
+   * Finds the first pricing region whose name matches a normalized segment.
+   *
+   * @param {string} segment - Normalized address segment
+   * @param {boolean} wholeWord - true: segment contains the term as whole words; false: segment equals the term
+   * @returns {string|null} Pricing region key
+   */
+  function regionInSegment(segment, wholeWord) {
+    var padded = ' ' + segment + ' ';
+    for (var i = 0; i < regionTerms.length; i++) {
+      var hit = regionTerms[i].terms.some(function (term) {
+        return wholeWord ? padded.indexOf(' ' + term + ' ') !== -1 : segment === term;
+      });
+      if (hit) return regionTerms[i].region;
+    }
+    return null;
+  }
+
+  /**
+   * Derives the pricing region from a map address such as
+   * "Türkiye, Antalya, Kemer, Göynük, Hotel X". Exact segment matches win over
+   * whole-word matches; the most specific segment wins (last when the address
+   * starts with the country, otherwise first).
+   *
+   * Why: Remote suggestions are free text, so the price region must be read
+   *      from the address instead of the catalog.
+   *
+   * @param {string} address - Full address text of a map suggestion
+   * @returns {string|null} Pricing region key, or null when none is recognised
+   */
+  function regionFromAddress(address) {
+    var segments = String(address || '').split(',').map(normalize).filter(Boolean);
+    if (!segments.length) return null;
+    var ordered = COUNTRY_SEGMENTS.indexOf(segments[0]) !== -1 ? segments.slice().reverse() : segments;
+
+    var passes = [false, true];
+    for (var p = 0; p < passes.length; p++) {
+      for (var i = 0; i < ordered.length; i++) {
+        var region = regionInSegment(ordered[i], passes[p]);
+        if (region) return region;
+      }
+    }
+    return null;
+  }
+
   /** @returns {string} Region display name for a pricing key ('' if unknown). */
   function regionName(regionKey) {
     return regionNames[regionKey] || '';
@@ -245,6 +307,9 @@
    */
   function attach(input, list) {
     var items = [];
+    var localItems = [];
+    var remoteItems = [];
+    var remoteTimer = null;
     var activeIndex = -1;
 
     function setExpanded(expanded) {
@@ -273,6 +338,9 @@
 
     function choose(location) {
       input.value = location.name;
+      input.dataset.selectedValue = location.name;
+      input.dataset.selectedKind = location.kind;
+      input.dataset.selectedRegion = location.region || '';
       setExpanded(false);
       input.dispatchEvent(new Event('change', { bubbles: true }));
     }
@@ -301,8 +369,8 @@
       return option;
     }
 
-    function render() {
-      items = dropdownItems(input.value);
+    function paint() {
+      items = localItems.concat(remoteItems);
       list.textContent = '';
       items.forEach(function (location, position) {
         list.appendChild(buildOption(location, position));
@@ -310,9 +378,37 @@
       setExpanded(items.length > 0);
     }
 
-    input.addEventListener('input', render);
+    function fetchRemote() {
+      clearTimeout(remoteTimer);
+      remoteItems = [];
+      if (!global.RemoteSuggest || !global.RemoteSuggest.isEnabled()) return;
+
+      var requestedText = input.value;
+      remoteTimer = setTimeout(function () {
+        global.RemoteSuggest.query(requestedText).then(function (results) {
+          if (input.value !== requestedText || document.activeElement !== input) return;
+          remoteItems = results.slice(0, MAX_REMOTE_ITEMS).map(function (result) {
+            return { name: result.displayName, kind: 'place', region: regionFromAddress(result.displayName), aliases: [] };
+          });
+          paint();
+        });
+      }, REMOTE_DEBOUNCE_MS);
+    }
+
+    function render() {
+      localItems = dropdownItems(input.value);
+      remoteItems = [];
+      paint();
+      fetchRemote();
+    }
+
+    input.addEventListener('input', function () {
+      delete input.dataset.selectedValue;
+      render();
+    });
     input.addEventListener('focus', function () {
       input.select();
+      if (global.RemoteSuggest) global.RemoteSuggest.preload();
       render();
     });
     input.addEventListener('blur', function () { setExpanded(false); });
@@ -338,8 +434,44 @@
     setExpanded(false);
   }
 
+  /**
+   * Resolves what an input currently means. A suggestion picked from the
+   * dropdown (still unchanged) is trusted as-is; anything typed by hand goes
+   * through resolve().
+   *
+   * @param {HTMLInputElement} input - Location input
+   * @returns {{status: string, location: (Object|null), label: string, suggestions: Object[]}}
+   */
+  function resolveInput(input) {
+    if (input.dataset.selectedValue && input.dataset.selectedValue === input.value) {
+      return {
+        status: 'match',
+        location: {
+          name: input.value,
+          kind: input.dataset.selectedKind,
+          region: input.dataset.selectedRegion || null
+        },
+        label: input.value,
+        suggestions: []
+      };
+    }
+    return resolve(input.value);
+  }
+
+  /** Swaps the picked-suggestion state of two inputs (used with the swap button). */
+  function swapSelections(first, second) {
+    ['selectedValue', 'selectedKind', 'selectedRegion'].forEach(function (key) {
+      var firstValue = first.dataset[key];
+      var secondValue = second.dataset[key];
+      if (secondValue === undefined) delete first.dataset[key]; else first.dataset[key] = secondValue;
+      if (firstValue === undefined) delete second.dataset[key]; else second.dataset[key] = firstValue;
+    });
+  }
+
   global.LocationSearch = Object.freeze({
     resolve: resolve,
+    resolveInput: resolveInput,
+    swapSelections: swapSelections,
     regionName: regionName,
     attach: attach
   });

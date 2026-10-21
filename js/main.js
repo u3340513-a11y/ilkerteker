@@ -4,15 +4,15 @@
  * Handles: navigation, booking form with vehicle pricing cards,
  * scroll effects, intersection observer animations, and scroll-to-top.
  *
- * When the user submits the booking form, instead of redirecting to WhatsApp
- * directly, vehicle packages are rendered with per-route pricing. Selecting
- * a vehicle and clicking "WhatsApp ile Rezervasyon" builds a detailed
- * message and opens WhatsApp.
+ * Booking flow: (1) the home form collects from / to / passengers, (2) vehicle
+ * packages are rendered with per-route pricing, (3) choosing a vehicle opens
+ * the checkout step (checkout.js) which collects trip and contact details and
+ * finally opens WhatsApp with the complete reservation.
  */
 (function () {
   'use strict';
 
-  var WHATSAPP_NUMBER = '905069374638';
+  var WHATSAPP_NUMBER = window.SiteConfig.whatsappNumber;
 
   /* ====================================================================
      Vehicle Definitions — mirrors toprakviptransfer.com fleet
@@ -252,8 +252,8 @@
 
     /* Footer */
     html += '<div class="vehicle-card-footer">';
-    html += '<button type="button" class="btn-vehicle-whatsapp" data-card-index="' + cardIndex + '">';
-    html += SVG_WHATSAPP + ' REZERVASYON';
+    html += '<button type="button" class="btn-vehicle-select" data-card-index="' + cardIndex + '">';
+    html += 'REZERVASYON YAP ' + SVG_ARROW_RIGHT;
     html += '</button>';
     html += '</div>';
 
@@ -305,60 +305,42 @@
     /* Smooth scroll to results */
     container.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    /* Attach WhatsApp button handlers */
-    var buttons = container.querySelectorAll('.btn-vehicle-whatsapp');
+    /* Attach vehicle selection handlers */
+    var buttons = container.querySelectorAll('.btn-vehicle-select');
     buttons.forEach(function (btn) {
       btn.addEventListener('click', function () {
         var idx = parseInt(btn.getAttribute('data-card-index'), 10);
-        handleVehicleReservation(idx, prices, formData);
+        startCheckout(idx, prices, formData);
       });
     });
   }
 
   /**
-   * Handles WhatsApp reservation when a vehicle is selected.
-   * Reads the selected pricing option (one-way vs round-trip) from
-   * the card's radio buttons, builds a message, and opens WhatsApp.
+   * Opens the checkout step for the chosen vehicle. The vehicle list is hidden
+   * meanwhile and restored when the customer goes back.
    *
    * @param {number} vehicleIndex - Index in VEHICLES array
    * @param {number[]} prices - Price array for the matched region
-   * @param {Object} formData - Original form values
+   * @param {Object} formData - { from, to, passengers, direction }
    */
-  function handleVehicleReservation(vehicleIndex, prices, formData) {
+  function startCheckout(vehicleIndex, prices, formData) {
     var vehicle = VEHICLES[vehicleIndex];
-    var oneWay = prices[vehicleIndex];
-    var radioName = 'pricing_' + vehicleIndex;
-    var selectedRadio = document.querySelector('input[name="' + radioName + '"]:checked');
-    var isRoundTrip = selectedRadio && selectedRadio.value === 'roundtrip';
-    var price = isRoundTrip ? oneWay * 2 : oneWay;
-    var tripType = isRoundTrip ? 'Gidiş / Dönüş' : 'Tek Yön';
+    var selectedRadio = document.querySelector('input[name="pricing_' + vehicleIndex + '"]:checked');
+    var container = document.getElementById('vehicleResults');
 
-    var lines = [
-      'Merhaba, transfer rezervasyonu yapmak istiyorum.',
-      '',
-      '🚗 Araç: ' + vehicle.name + ' (' + vehicle.pax + ' PAX)',
-      '📍 Nereden: ' + formData.from,
-      '📍 Nereye: ' + formData.to,
-      '👥 Yolcu Sayısı: ' + formData.passengers,
-      '📅 Alınış Tarihi: ' + formData.date,
-      '🕐 Alınış Saati: ' + formData.time,
-      '💰 ' + tripType + ': ' + price + ' €'
-    ];
-
-    if (formData.hasReturn && formData.returnDate && formData.returnTime) {
-      lines.push('📅 Dönüş Tarihi: ' + formData.returnDate);
-      lines.push('🕐 Dönüş Saati: ' + formData.returnTime);
-    }
-
-    if (formData.note) {
-      lines.push('📝 Not: ' + formData.note);
-    }
-
-    lines.push('', 'Rezervasyon onayı alabilir miyim?');
-
-    var message = lines.join('\n');
-    var url = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(message);
-    window.open(url, '_blank', 'noopener');
+    container.hidden = true;
+    Checkout.open({
+      vehicleName: vehicle.name + ' (' + vehicle.pax + ' PAX)',
+      oneWayPrice: prices[vehicleIndex],
+      roundTrip: Boolean(selectedRadio && selectedRadio.value === 'roundtrip'),
+      from: formData.from,
+      to: formData.to,
+      direction: formData.direction,
+      passengers: formData.passengers
+    }, function showVehicleList() {
+      container.hidden = false;
+      container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   }
 
   /* ====================================================================
@@ -389,18 +371,6 @@
               .replace(/'/g, '&#39;')
               .replace(/</g, '&lt;')
               .replace(/>/g, '&gt;');
-  }
-
-  /**
-   * Formats an ISO date string (YYYY-MM-DD) to Turkish format (DD.MM.YYYY).
-   *
-   * @param {string} isoDate - ISO date string
-   * @returns {string} Formatted date string
-   */
-  function formatDate(isoDate) {
-    var parts = isoDate.split('-');
-    if (parts.length !== 3) return isoDate;
-    return parts[2] + '.' + parts[1] + '.' + parts[0];
   }
 
   /* ====================================================================
@@ -448,14 +418,12 @@
    * carries exactly what the customer typed.
    *
    * @param {HTMLElement} container - Results container
-   * @param {Object} quote - { from, to, passengers, date, time }
+   * @param {Object} quote - { from, to, passengers }
    */
   function renderQuoteFallback(container, quote) {
     var message = 'Merhaba, transfer fiyat bilgisi almak istiyorum.\n\nNereden: ' + quote.from +
       '\nNereye: ' + quote.to +
-      '\nYolcu: ' + quote.passengers +
-      '\nTarih: ' + quote.date +
-      '\nSaat: ' + quote.time;
+      '\nYolcu: ' + quote.passengers;
 
     container.innerHTML =
       '<div class="vehicle-no-results">' +
@@ -654,6 +622,7 @@
       var previousFrom = fromInput.value;
       fromInput.value = toInput.value;
       toInput.value = previousFrom;
+      LocationSearch.swapSelections(fromInput, toInput);
     });
   }
 
@@ -663,27 +632,18 @@
     LocationSearch.attach(toInput, document.getElementById('toList'));
   }
 
-  /* ---- Toggle return date/time row ---- */
-  var returnToggle = document.getElementById('returnToggle');
-  var returnRow = document.getElementById('returnRow');
-
-  if (returnToggle && returnRow) {
-    returnToggle.addEventListener('change', function () {
-      returnRow.hidden = !returnToggle.checked;
+  /* ---- Popular regions: prefill destination from the clicked card ---- */
+  document.querySelectorAll('.region-card').forEach(function (card) {
+    card.addEventListener('click', function (event) {
+      var form = document.getElementById('bookingForm');
+      if (!form || !toInput) {
+        return;
+      }
+      event.preventDefault();
+      toInput.value = card.getAttribute('data-region-name');
+      form.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
-  }
-
-  /* ---- Set default pickup date min ---- */
-  var pickupDate = document.getElementById('pickupDate');
-  var returnDate = document.getElementById('returnDate');
-  var today = new Date().toISOString().split('T')[0];
-
-  if (pickupDate) {
-    pickupDate.min = today;
-  }
-  if (returnDate) {
-    returnDate.min = today;
-  }
+  });
 
   /* ---- Booking form → Vehicle Results ---- */
   var bookingForm = document.getElementById('bookingForm');
@@ -702,20 +662,15 @@
       if (child > 0) paxParts.push(child + ' Çocuk');
       if (baby > 0) paxParts.push(baby + ' Bebek');
       var passengers = paxParts.join(', ') || '1 Yetişkin';
-      var date = document.getElementById('pickupDate').value;
-      var time = document.getElementById('pickupTime').value;
-      var hasReturn = document.getElementById('returnToggle').checked;
-      var rDate = document.getElementById('returnDate').value;
-      var rTime = document.getElementById('returnTime').value;
-      var note = document.getElementById('note').value.trim();
 
-      if (!from || !to || !date || !time) {
-        alert('Lütfen tüm zorunlu alanları doldurun.');
+      if (!from || !to) {
+        alert('Lütfen nereden ve nereye bilgilerini doldurun.');
         return;
       }
 
-      var fromRes = LocationSearch.resolve(from);
-      var toRes = LocationSearch.resolve(to);
+      Checkout.close();
+      var fromRes = LocationSearch.resolveInput(document.getElementById('fromInput'));
+      var toRes = LocationSearch.resolveInput(document.getElementById('toInput'));
       var container = document.getElementById('vehicleResults');
 
       /* Ambiguous or misspelled text: ask the customer to confirm */
@@ -737,14 +692,12 @@
 
       var regionKey = findPricingRegion(fromRes, toRes);
 
-      if (!regionKey) {
+      if (!regionKey || !PRICING[regionKey]) {
         if (container) {
           renderQuoteFallback(container, {
             from: from,
             to: to,
-            passengers: passengers,
-            date: formatDate(date),
-            time: time
+            passengers: passengers
           });
         }
         return;
@@ -758,12 +711,7 @@
         from: fromLabel,
         to: toLabel,
         passengers: passengers,
-        date: formatDate(date),
-        time: time,
-        hasReturn: hasReturn,
-        returnDate: rDate ? formatDate(rDate) : '',
-        returnTime: rTime || '',
-        note: note
+        direction: fromRes.location.kind === 'airport' ? 'Havalimanından Bölgeye' : 'Bölgeden Havalimanına'
       };
 
       renderVehicleResults(prices, fromLabel, toLabel, formData);

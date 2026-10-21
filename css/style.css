@@ -386,10 +386,15 @@ p {
   height: 72px;
 }
 
+.logo {
+  flex-shrink: 0;
+}
+
 .logo img {
-  height: 120px;
+  display: block;
+  max-width: none;
+  height: 48px;
   width: auto;
-  margin: -34px 0;
 }
 
 .main-nav ul {
@@ -463,7 +468,7 @@ p {
   position: relative;
   background: var(--color-bg);
   overflow: hidden;
-  min-height: 480px;
+  min-height: 0;
 }
 
 .hero-image {
@@ -482,14 +487,16 @@ p {
 }
 
 .hero-slider {
-  aspect-ratio: 1376 / 768;
-  min-height: 400px;
+  /* Viewport minus sticky header (72px) and the part of the booking form below the hero (~80px) */
+  height: clamp(320px, calc(100vh - 150px), 720px);
+  height: clamp(320px, calc(100svh - 150px), 720px);
   overflow: hidden;
 }
 
 .hero-slider .hero-slide {
   position: absolute;
   inset: 0;
+  min-height: 0;
   height: 100%;
   opacity: 0;
   transition: opacity 1.2s ease-in-out;
@@ -558,7 +565,7 @@ p {
   background: #fff;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
-  padding: 36px;
+  padding: 24px;
 }
 
 .booking-row {
@@ -566,14 +573,6 @@ p {
   align-items: flex-end;
   gap: 16px;
   flex-wrap: wrap;
-}
-
-.booking-row + .booking-row {
-  margin-top: 20px;
-}
-
-.booking-row[hidden] {
-  display: none;
 }
 
 .field {
@@ -592,20 +591,10 @@ p {
   flex: 1 1 150px;
 }
 
-.field-grow {
-  flex: 2 1 260px;
-}
-
 .field label {
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--color-dark);
-}
-
-.field-hint {
-  font-weight: 400;
-  color: var(--color-primary-dark);
-  font-size: 0.78rem;
 }
 
 .input-icon {
@@ -830,26 +819,6 @@ p {
 }
 
 
-.field input[type="date"],
-.field input[type="time"] {
-  border: 1.5px solid var(--color-border);
-  border-radius: 8px;
-  padding: 12px 14px;
-  background: #fff;
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  color: var(--color-dark);
-  outline: none;
-  transition: var(--transition);
-}
-
-.field input[type="date"]:focus,
-.field input[type="time"]:focus {
-  border-color: var(--color-primary);
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(232, 161, 61, 0.1);
-}
-
 .swap-btn {
   width: 42px;
   height: 42px;
@@ -869,16 +838,6 @@ p {
 .swap-btn:hover {
   background: var(--color-primary);
   color: #fff;
-}
-
-.field-toggle {
-  flex: 0 0 auto;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--color-dark);
 }
 
 .switch {
@@ -1180,7 +1139,7 @@ p {
   justify-content: flex-end;
 }
 
-.btn-vehicle-whatsapp {
+.btn-vehicle-select {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1198,7 +1157,7 @@ p {
   box-shadow: 0 4px 16px rgba(232, 161, 61, 0.3);
 }
 
-.btn-vehicle-whatsapp:hover {
+.btn-vehicle-select:hover {
   background: var(--color-primary-dark);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(232, 161, 61, 0.4);
@@ -1572,7 +1531,7 @@ p {
     justify-content: center;
   }
 
-  .btn-vehicle-whatsapp {
+  .btn-vehicle-select {
     width: 100%;
   }
 
@@ -1843,6 +1802,131 @@ p {
   color: #fff;
   border-color: var(--color-primary);
   transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   Popular Regions (photo cards with starting prices)
+   ========================================================================== */
+.popular-regions {
+  background: var(--color-bg-soft);
+}
+
+.popular-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 48px;
+}
+
+.region-card {
+  display: block;
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.region-card:hover,
+.region-card:focus-visible {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+
+.region-card:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.region-media {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--color-bg-alt);
+}
+
+.region-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.region-card:hover .region-media img {
+  transform: scale(1.06);
+}
+
+.region-media::after {
+  content: '';
+  position: absolute;
+  inset: 45% 0 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.75) 100%);
+}
+
+.region-price {
+  position: absolute;
+  right: 14px;
+  bottom: 10px;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.region-price strong {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.region-price small {
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+
+.region-name {
+  display: block;
+  padding: 12px 14px;
+  font-size: 0.82rem;
+  color: var(--color-text);
+}
+
+.region-name b {
+  color: var(--color-dark);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.popular-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 36px;
+}
+
+@media (max-width: 900px) {
+  .popular-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .popular-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .region-price strong {
+    font-size: 1.15rem;
+  }
+
+  .region-name {
+    padding: 10px;
+    font-size: 0.74rem;
+  }
 }
 
 /* ==========================================================================
@@ -2282,32 +2366,33 @@ p {
   }
 
   .booking-wrap {
-    margin-top: 0;
-    padding: 0 16px;
+    margin-top: -48px;
+    padding: 0 12px;
     margin-bottom: 20px;
   }
 
   .booking-form {
-    padding: 24px;
+    padding: 16px;
     border-radius: var(--radius);
   }
 
   .booking-row {
     flex-direction: column;
     align-items: stretch;
+    gap: 10px;
   }
 
   .field-from,
   .field-to,
-  .field-sm,
-  .field-grow {
-    flex: 1 1 auto;
+  .field-sm {
+    flex: 0 0 auto;
+    gap: 6px;
   }
 
   .swap-btn {
     align-self: center;
     transform: rotate(90deg);
-    margin: -4px 0;
+    margin: -6px 0;
   }
 
   .btn-search {
@@ -2320,15 +2405,23 @@ p {
   }
 
   .hero {
-    min-height: 350px;
+    min-height: 0;
   }
 
   .hero-image img {
-    min-height: 350px;
+    min-height: 0;
+    object-position: center;
+  }
+
+  /* Compact hero: the booking form must be visible on the first screen. */
+  .hero-slider {
+    height: clamp(170px, 26vh, 240px);
+    height: clamp(170px, 26svh, 240px);
   }
 
   .hero-content {
-    transform: translate(-50%, -55%);
+    top: 40%;
+    transform: translate(-50%, -50%);
   }
 
   .service-detail-card {
@@ -2353,19 +2446,29 @@ p {
   }
 
   .logo img {
-    height: 38px;
+    height: 32px;
   }
 
   .header-inner {
     height: 60px;
   }
 
-  .header-actions .btn-whatsapp span {
+  .header-actions .btn-whatsapp {
     display: none;
   }
 
-  .header-actions .btn-whatsapp {
-    padding: 12px;
+  .header-inner {
+    gap: 10px;
+  }
+
+  .header-actions .btn-primary {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .header-actions .btn-primary svg {
+    display: none;
   }
 
   .hero-content {
