@@ -481,6 +481,30 @@ p {
   filter: brightness(1.05) saturate(0.85);
 }
 
+.hero-slider {
+  aspect-ratio: 1376 / 768;
+  min-height: 400px;
+  overflow: hidden;
+}
+
+.hero-slider .hero-slide {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+}
+
+.hero-slider .hero-slide.is-active {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-slider .hero-slide {
+    transition: none;
+  }
+}
+
 .hero-image::after {
   content: '';
   position: absolute;

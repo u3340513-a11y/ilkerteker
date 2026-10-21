@@ -803,6 +803,43 @@
     });
   }
 
+  /* ---- Hero slider: crossfade between hero slides ---- */
+  var HERO_SLIDE_INTERVAL_MS = 5000;
+  var heroSlides = document.querySelectorAll('#heroSlider .hero-slide');
+  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (heroSlides.length > 1 && !prefersReducedMotion) {
+    var activeHeroIndex = 0;
+    var heroTimer = null;
+
+    var showNextHeroSlide = function () {
+      heroSlides[activeHeroIndex].classList.remove('is-active');
+      activeHeroIndex = (activeHeroIndex + 1) % heroSlides.length;
+      heroSlides[activeHeroIndex].classList.add('is-active');
+    };
+
+    var startHeroSlider = function () {
+      if (!heroTimer) {
+        heroTimer = setInterval(showNextHeroSlide, HERO_SLIDE_INTERVAL_MS);
+      }
+    };
+
+    var stopHeroSlider = function () {
+      clearInterval(heroTimer);
+      heroTimer = null;
+    };
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        stopHeroSlider();
+      } else {
+        startHeroSlider();
+      }
+    });
+
+    startHeroSlider();
+  }
+
   /* ---- Intersection Observer for fade-in animations ---- */
   var fadeElements = document.querySelectorAll('.fade-in');
 
