@@ -85,27 +85,51 @@
   }
 
   /**
-   * Builds "Title, Subtitle" from a Yandex suggestion (subtitle carries the address).
+   * Reads the clean address of a Yandex suggestion (falls back to the subtitle,
+   * which may carry a category prefix such as "Otel · ").
    *
    * @param {Object} item - One entry of the Yandex "results" array
-   * @returns {string} Display text ('' when the item has no title)
+   * @returns {string} Address text ('' when unavailable)
    */
-  function yandexDisplayName(item) {
-    var title = item.title && item.title.text;
-    var subtitle = item.subtitle && item.subtitle.text;
-    return uniqueNonEmpty([title, subtitle]).join(ADDRESS_SEPARATOR);
+  function yandexAddress(item) {
+    if (item.address && item.address.formatted_address) return String(item.address.formatted_address);
+    return item.subtitle && item.subtitle.text ? String(item.subtitle.text) : '';
+  }
+
+  /**
+   * Maps a Yandex suggestion to a result. Yandex addresses list the largest
+   * area first, so regionAddress reverses them (most specific first) for price
+   * region detection.
+   *
+   * @param {Object} item - One entry of the Yandex "results" array
+   * @returns {{displayName: string, regionAddress: string}} Result ('' displayName when untitled)
+   */
+  function yandexResult(item) {
+    var title = item.title && item.title.text ? String(item.title.text) : '';
+    var address = yandexAddress(item);
+    var segments = address.split(ADDRESS_SEPARATOR);
+    return {
+      displayName: uniqueNonEmpty([title, address]).join(ADDRESS_SEPARATOR),
+      regionAddress: [title].concat(segments.reverse()).join(ADDRESS_SEPARATOR)
+    };
   }
 
   /**
    * Fetches suggestions from the Yandex Geosuggest HTTP API.
    *
    * @param {string} typed - Trimmed customer text
-   * @returns {Promise<{displayName: string}[]>} Unique suggestions
+   * @returns {Promise<{displayName: string, regionAddress: string}[]>} Unique suggestions
    */
   function queryYandex(typed) {
     return fetchJson(buildYandexUrl(typed)).then(function (data) {
-      return uniqueNonEmpty((data.results || []).map(yandexDisplayName))
-        .map(function (name) { return { displayName: name }; });
+      var seen = {};
+      return (data.results || [])
+        .map(yandexResult)
+        .filter(function (result) {
+          if (!result.displayName || seen[result.displayName]) return false;
+          seen[result.displayName] = true;
+          return true;
+        });
     });
   }
 

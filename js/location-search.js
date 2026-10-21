@@ -44,6 +44,8 @@
   /* Address segments that name a country/province, never a pricing region. */
   var GENERIC_ADDRESS_SEGMENTS = ['turkiye', 'turkey', 'antalya', 'antalya ili', 'antalya province'];
   var COUNTRY_SEGMENTS = ['turkiye', 'turkey'];
+  /* Neighbourhood suffixes ("Beldibi Mah.") ignored when matching region names. */
+  var NEIGHBOURHOOD_SUFFIX = /\b(mah|mahallesi|mh)\b/g;
 
   /**
    * Lowercases (Turkish rules), strips diacritics and punctuation so that
@@ -245,6 +247,16 @@
   }
 
   /**
+   * Normalizes one address segment and drops neighbourhood suffixes.
+   *
+   * @param {string} segment - Raw address segment
+   * @returns {string} Normalized segment
+   */
+  function normalizeSegment(segment) {
+    return normalize(segment).replace(NEIGHBOURHOOD_SUFFIX, ' ').replace(/\s+/g, ' ').trim();
+  }
+
+  /**
    * Derives the pricing region from a map address such as
    * "Türkiye, Antalya, Kemer, Göynük, Hotel X". Exact segment matches win over
    * whole-word matches; the most specific segment wins (last when the address
@@ -257,7 +269,7 @@
    * @returns {string|null} Pricing region key, or null when none is recognised
    */
   function regionFromAddress(address) {
-    var segments = String(address || '').split(',').map(normalize).filter(Boolean);
+    var segments = String(address || '').split(',').map(normalizeSegment).filter(Boolean);
     if (!segments.length) return null;
     var ordered = COUNTRY_SEGMENTS.indexOf(segments[0]) !== -1 ? segments.slice().reverse() : segments;
 
@@ -388,7 +400,12 @@
         global.RemoteSuggest.query(requestedText).then(function (results) {
           if (input.value !== requestedText || document.activeElement !== input) return;
           remoteItems = results.slice(0, MAX_REMOTE_ITEMS).map(function (result) {
-            return { name: result.displayName, kind: 'place', region: regionFromAddress(result.displayName), aliases: [] };
+            return {
+              name: result.displayName,
+              kind: 'place',
+              region: regionFromAddress(result.regionAddress || result.displayName),
+              aliases: []
+            };
           });
           paint();
         });
